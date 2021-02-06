@@ -1,6 +1,3 @@
-//can be deleted
-console.log("Console log works!");
-
 let createTodo = document.getElementById("create")
 let list = document.getElementById("todolist")
 let textInput = document.getElementById("newtodo")
