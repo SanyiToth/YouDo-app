@@ -12,10 +12,16 @@
     <h2 id="todo-title">Todo List</h2>
     <form id="todo-form">
         <label for="newtodo">Your new todo</label> <br>
-        <input id="newtodo" required  type="text"> <br><br>
+        <input id="newtodo" required type="text"><br><br>
         <label for="duedate">Add Due date</label><br>
         <input id="duedate" required type="date"><br><br>
-        <input id="create" disabled type="submit" value="Create">
+        <label for="priority">Todo priority:</label>
+        <select id="priority" name="priority" required>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+        </select> <br> <br>
+        <input disabled id="create" required type="submit" value="Create">
     </form>
     <ul id="todolist"></ul>
 </div>

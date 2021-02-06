@@ -1,32 +1,33 @@
 /* Your styles */
 body {
     display: flex;
-    justify-content: center;
+    justify-content: center
 }
 
 h2 {
-    text-align: center;
+    text-align: center
 }
 
 .delbtn {
     padding: 0.2rem;
     background: #ccc;
     cursor: pointer;
-    margin-left: 0.5rem;
+    margin-left: 0.5rem
 }
 
 li {
-    padding: 0.5rem;
+    padding: 0.5rem
 }
 
-#newtodo{
-    outline: none;
+#newtodo {
+    outline: none
 }
+
 .valid {
-    border: 2px solid green;
+    border: 2px solid green
 }
 
 .invalid {
-    border: 2px solid red;
+    border: 2px solid red
 }
 
