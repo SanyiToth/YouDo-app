@@ -11,18 +11,18 @@
 <div id="todo">
     <h2 id="todo-title">Todo List</h2>
     <form id="todo-form">
-        <label for="newtodo">Your new todo</label> <br>
-        <input id="newtodo" required type="text"><br><br>
+        <input id="newtodo" placeholder="write your todo here" type="text"><br><br>
         <label for="duedate">Add Due date</label><br>
         <input id="duedate" required type="date"><br><br>
         <label for="priority">Todo priority:</label>
-        <select id="priority" name="priority" required>
+        <select id="priority" name="priority">
             <option value="low">Low</option>
             <option value="medium">Medium</option>
             <option value="high">High</option>
         </select> <br> <br>
         <input disabled id="create" required type="submit" value="Create">
     </form>
+
     <ul id="todolist"></ul>
 </div>
 <script src="js/scripts.js"></script>

@@ -4,26 +4,33 @@ let textInput = document.getElementById("newtodo")
 let dateInput = document.getElementById("duedate")
 let priorityInput = document.getElementById("priority")
 let todoArray = getStoredList()
-
+let todoItem = {}
 
 showStoredList()
 
+
 createTodo.addEventListener("click", function (e) {
     e.preventDefault()
-    const todoItem = {
+    setTodoItem()
+    todoArray.unshift(todoItem)
+    setStoredList(todoArray)
+    showStoredList()
+    isTodoValid(textInput, createTodo)
+})
+
+
+function setTodoItem() {
+    todoItem = {
         todo: textInput.value,
         duedate: dateInput.value,
         priority: priorityInput.value
     }
-    todoArray.unshift(todoItem)
-    setStoredList(todoArray)
-    showStoredList()
-    isTodoValid(textInput, dateInput, createTodo)
-})
+}
+
 
 textInput.addEventListener("keyup", function (e) {
     e.preventDefault()
-    isTodoValid(textInput, dateInput, createTodo)
+    isTodoValid(textInput, createTodo)
 })
 
 
@@ -67,23 +74,19 @@ function showStoredList() {
         let newLi = `<li data-id=${index}>${item.todo} , Due date: ${item.duedate} , Priority: ${item.priority}<span class="delbtn" onclick="delItem(event)">Delete</span></li>`
         list.innerHTML += newLi
     })
-    console.log(getStoredList())
     inputClear()
 }
 
-function isTodoValid(input1, input2, button) {
-    if (input1.value.length < 6 && input2.value) {
-        input1.classList.add("invalid")
-        input1.classList.remove("valid")
-        input1.classList.add("invalid")
-        input1.classList.remove("valid")
+function isTodoValid(input, button) {
+    if (input.value.length < 6) {
+        input.classList.add("invalid")
+        input.classList.remove("valid")
         button.disabled = true
     } else {
-        input1.classList.remove("invalid")
-        input1.classList.add("valid")
-        input1.classList.remove("invalid")
-        input1.classList.add("valid")
+        input.classList.remove("invalid")
+        input.classList.add("valid")
         button.disabled = false
     }
-    return input1.value.length >= 6
+    return input.value.length >= 6
 }
+
