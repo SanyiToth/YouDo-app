@@ -7,5 +7,14 @@ h2{
     text-align: center;
 }
 
+.delbtn {
+    padding: 0.2rem;
+    background: #ccc;
+    cursor: pointer;
+    margin-left: 0.5rem;
+}
 
+li {
+    padding: 0.5rem;
+}
 
