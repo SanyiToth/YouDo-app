@@ -3,7 +3,8 @@ body {
     display: flex;
     justify-content: center;
 }
-h2{
+
+h2 {
     text-align: center;
 }
 
@@ -16,5 +17,16 @@ h2{
 
 li {
     padding: 0.5rem;
+}
+
+#newtodo{
+    outline: none;
+}
+.valid {
+    border: 2px solid green;
+}
+
+.invalid {
+    border: 2px solid red;
 }
 
