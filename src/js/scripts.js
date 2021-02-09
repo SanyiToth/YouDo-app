@@ -1,43 +1,79 @@
 let createTodo = document.getElementById("create")
+let selectInput = document.getElementById("selector")
+let form = document.getElementById("todo-form")
 let list = document.getElementById("todolist")
 let textInput = document.getElementById("newtodo")
 let dateInput = document.getElementById("duedate")
-let priorityInput = document.getElementById("priority")
+let priorityInput = document.querySelectorAll('input[name="priority"]')
+let filterBox = document.getElementById("filter-box")
 let todoArray = getStoredList()
-let todoItem = {}
+let todoArrayItem = {}
+let itemIndex = null
 
-showStoredList()
+//save selectInput value in LocalStorage
+selectInput.value = localStorage.getItem('valueOfFilteredList')
+logFilteredList()
 
-
-createTodo.addEventListener("click", function (e) {
-    e.preventDefault()
-    setTodoItem()
-    todoArray.unshift(todoItem)
+form.addEventListener("submit", event => {
+    event.preventDefault()
+    getRadioInputValue(priorityInput)
+    setTodoArrayItem(textInput, dateInput, getRadioInputValue(priorityInput))
+    checkSubmitValue();
+    inputClear()
+    isTodoValid(textInput, createTodo)
     setStoredList(todoArray)
-    showStoredList()
+    logFilteredList()
+})
+
+form.addEventListener("keyup", event => {
+    event.preventDefault()
     isTodoValid(textInput, createTodo)
 })
 
+list.addEventListener("click", event => {
+    delItem(event)
+    showSelectedItem(event);
+    logSelectedItemOnInput(event)
+})
 
-function setTodoItem() {
-    todoItem = {
-        todo: textInput.value,
-        duedate: dateInput.value,
-        priority: priorityInput.value
+filterBox.addEventListener("click", event => {
+    logFilteredList()
+    localStorage.setItem('valueOfFilteredList', selectInput.value)
+})
+
+
+function logSelectedItemOnInput(event) {
+    itemIndex = event.target.parentElement.dataset.id
+    if (event.target.classList.contains('editbtn')) {
+        textInput.value = getFilteredList()[itemIndex].text
+        dateInput.value = getFilteredList()[itemIndex].date
+        priorityInput.value = getFilteredList()[itemIndex].priority
     }
 }
 
-
-textInput.addEventListener("keyup", function (e) {
-    e.preventDefault()
-    isTodoValid(textInput, createTodo)
-})
-
-
-function setStoredList(list) {
-    localStorage.setItem('myitems', JSON.stringify(list))
+function delItem(event) {
+    const index = event.target.parentElement.dataset.id
+    if (event.target.classList.contains('delbtn')) {
+        const filteredList = getFilteredList().filter((item, i) => {
+            return i.toString() !== index
+        })
+        setStoredList(filteredList)
+        todoArray = getStoredList()
+        logFilteredList()
+    }
 }
 
+function setTodoArrayItem(text, date, priority) {
+    todoArrayItem = {
+        text: text.value,
+        date: date.value,
+        priority: priority.value
+    }
+}
+
+function setStoredList(listArray) {
+    localStorage.setItem('myitems', JSON.stringify(listArray))
+}
 
 function getStoredList() {
     if (localStorage.getItem('myitems') !== null) {
@@ -47,35 +83,14 @@ function getStoredList() {
     }
 }
 
-
-function delItem(event) {
-    const li = event.target.parentElement
-    const id = li.dataset.id
-    const filteredList = getStoredList().filter((item, i) => {
-        return i.toString() !== id
-    })
-    setStoredList(filteredList)
-    todoArray = getStoredList()
-    showStoredList()
-}
-
-
 function listClear() {
     return list.innerHTML = ""
 }
 
 function inputClear() {
-    return textInput.value = ""
+    textInput.value = ""
 }
 
-function showStoredList() {
-    listClear()
-    getStoredList().forEach((item, index) => {
-        let newLi = `<li data-id=${index}>${item.todo} , Due date: ${item.duedate} , Priority: ${item.priority}<span class="delbtn" onclick="delItem(event)">Delete</span></li>`
-        list.innerHTML += newLi
-    })
-    inputClear()
-}
 
 function isTodoValid(input, button) {
     if (input.value.length < 6) {
@@ -87,6 +102,73 @@ function isTodoValid(input, button) {
         input.classList.add("valid")
         button.disabled = false
     }
-    return input.value.length >= 6
 }
 
+function getRadioInputValue(input) {
+    let value = ""
+    input.forEach((item) => {
+        if (item.checked) {
+            value = item
+        }
+    })
+    return value
+}
+
+
+function getFilteredList() {
+    return getStoredList().filter((item) => {
+        if (item.priority === localStorage.getItem('valueOfFilteredList')) {
+            return item.priority
+        } else if (localStorage.getItem('valueOfFilteredList') === "all") {
+            return getStoredList()
+        }
+    })
+}
+
+function logFilteredList() {
+    listClear()
+    getFilteredList().forEach((item, index) => {
+        let newLi = `<li data-id=${index}>${item.text} , Due date: ${item.date} , Priority: ${item.priority} 
+        <span class="editbtn" onclick="">Edit</span>
+        <span class="delbtn">Delete</span></li>`
+        list.innerHTML += newLi
+    })
+}
+
+
+function checkSubmitValue() {
+    if (createTodo.value === "Create") {
+        todoArray.unshift(todoArrayItem)
+    } else {
+        todoArray[itemIndex] = todoArrayItem
+        createTodo.value = "Create"
+    }
+}
+
+function showSelectedItem(event) {
+    Array.from(list.children).forEach((item, index) => {
+        const selectedItem = event.target
+        const listItem = item.children.item(0)
+        if (selectedItem === listItem) {
+            listItem.textContent = "Selected"
+            item.style.border = "2px solid red"
+            createTodo.value = "Save"
+            // logSelectedItemOnInput(event)
+            isTodoValid(textInput, createTodo)
+        } else {
+            listItem.textContent = "Edit"
+            item.style.border = "none"
+        }
+    })
+}
+
+/*function logStoredList() {
+    listClear()
+    getStoredList().forEach((item, index) => {
+        let newLi = `<li data-id=${index}>${item.text} , Due date: ${item.date} , Priority: ${item.priority}
+        <span class="editbtn" onclick="">Edit</span>
+        <span class="delbtn">Delete</span></li>`
+        list.innerHTML += newLi
+    })
+    inputClear()
+}*/

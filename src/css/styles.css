@@ -7,10 +7,10 @@ h2 {
     text-align: center
 }
 
-input{
+/*input {
     width: 200px;
     height: 30px;
-}
+}*/
 
 
 li {
@@ -31,6 +31,13 @@ li {
 }
 
 .delbtn {
+    padding: 0.2rem;
+    background: #ccc;
+    cursor: pointer;
+    margin-left: 0.5rem
+}
+
+.editbtn {
     padding: 0.2rem;
     background: #ccc;
     cursor: pointer;
