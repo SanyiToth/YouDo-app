@@ -10,40 +10,60 @@ let todoArray = getStoredList()
 let todoArrayItem = {}
 let itemIndex = null
 
-//save selectInput value in LocalStorage
+//load selectInput value from LocalStorage
 selectInput.value = localStorage.getItem('valueOfFilteredList')
 logFilteredList()
 
 form.addEventListener("submit", event => {
     event.preventDefault()
-    getRadioInputValue(priorityInput)
     setTodoArrayItem(textInput, dateInput, getRadioInputValue(priorityInput))
-    checkSubmitValue();
+    updateTodoList()
     inputClear()
-    isTodoValid(textInput, createTodo)
+    validateTodoItem(textInput, createTodo)
     setStoredList(todoArray)
     logFilteredList()
 })
 
 form.addEventListener("keyup", event => {
     event.preventDefault()
-    isTodoValid(textInput, createTodo)
+    validateTodoItem(textInput, createTodo)
 })
 
 list.addEventListener("click", event => {
+    itemIndex = event.target.parentElement.dataset.id
     delItem(event)
     showSelectedItem(event);
     logSelectedItemOnInput(event)
 })
 
-filterBox.addEventListener("click", event => {
+filterBox.addEventListener("click", function (){
     logFilteredList()
+    //save selectInput value in LocalStorage
     localStorage.setItem('valueOfFilteredList', selectInput.value)
 })
 
+function logFilteredList() {
+    listClear()
+    getFilteredList().forEach((item, index) => {
+        let newLi = `<li data-id=${index}>${item.text} , Due date: ${item.date} , Priority: ${item.priority} 
+        <span class="editbtn" onclick="">Edit</span>
+        <span class="delbtn">Delete</span></li>`
+        list.innerHTML += newLi
+    })
+}
+
+function getFilteredList() {
+    return getStoredList().filter((item) => {
+        if (item.priority === localStorage.getItem('valueOfFilteredList')) {
+            return item.priority
+        } else if (localStorage.getItem('valueOfFilteredList') === "all") {
+            return getStoredList()
+        }
+    })
+}
+
 
 function logSelectedItemOnInput(event) {
-    itemIndex = event.target.parentElement.dataset.id
     if (event.target.classList.contains('editbtn')) {
         textInput.value = getFilteredList()[itemIndex].text
         dateInput.value = getFilteredList()[itemIndex].date
@@ -51,11 +71,30 @@ function logSelectedItemOnInput(event) {
     }
 }
 
+
+
+function showSelectedItem(event) {
+    Array.from(list.children).forEach((item) => {
+        const selectedItem = event.target
+        const listItem = item.children.item(0)
+        if (selectedItem === listItem) {
+            listItem.textContent = "Selected"
+            item.style.border = "2px solid red"
+            createTodo.value = "Save"
+            validateTodoItem(textInput, createTodo)
+        } else {
+            listItem.textContent = "Edit"
+            item.style.border = "none"
+        }
+    })
+}
+
+
+
 function delItem(event) {
-    const index = event.target.parentElement.dataset.id
     if (event.target.classList.contains('delbtn')) {
         const filteredList = getFilteredList().filter((item, i) => {
-            return i.toString() !== index
+            return i.toString() !== itemIndex
         })
         setStoredList(filteredList)
         todoArray = getStoredList()
@@ -92,7 +131,7 @@ function inputClear() {
 }
 
 
-function isTodoValid(input, button) {
+function validateTodoItem(input, button) {
     if (input.value.length < 6) {
         input.classList.add("invalid")
         input.classList.remove("valid")
@@ -115,28 +154,7 @@ function getRadioInputValue(input) {
 }
 
 
-function getFilteredList() {
-    return getStoredList().filter((item) => {
-        if (item.priority === localStorage.getItem('valueOfFilteredList')) {
-            return item.priority
-        } else if (localStorage.getItem('valueOfFilteredList') === "all") {
-            return getStoredList()
-        }
-    })
-}
-
-function logFilteredList() {
-    listClear()
-    getFilteredList().forEach((item, index) => {
-        let newLi = `<li data-id=${index}>${item.text} , Due date: ${item.date} , Priority: ${item.priority} 
-        <span class="editbtn" onclick="">Edit</span>
-        <span class="delbtn">Delete</span></li>`
-        list.innerHTML += newLi
-    })
-}
-
-
-function checkSubmitValue() {
+function updateTodoList() {
     if (createTodo.value === "Create") {
         todoArray.unshift(todoArrayItem)
     } else {
@@ -145,22 +163,7 @@ function checkSubmitValue() {
     }
 }
 
-function showSelectedItem(event) {
-    Array.from(list.children).forEach((item, index) => {
-        const selectedItem = event.target
-        const listItem = item.children.item(0)
-        if (selectedItem === listItem) {
-            listItem.textContent = "Selected"
-            item.style.border = "2px solid red"
-            createTodo.value = "Save"
-            // logSelectedItemOnInput(event)
-            isTodoValid(textInput, createTodo)
-        } else {
-            listItem.textContent = "Edit"
-            item.style.border = "none"
-        }
-    })
-}
+
 
 /*function logStoredList() {
     listClear()
